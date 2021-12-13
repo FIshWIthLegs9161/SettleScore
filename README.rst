@@ -49,7 +49,7 @@ This project has **three deadlines options**. Students who perform their final
 submission via the submit command before the date/times listed below automatically
 receive the associated Submission-Based (SB) extra credit. The amended late penalty
 that is described in the "|final_pols|_" section does not start applying until
-after the final date and time listed.
+after the final date and time listed. If this text appears, I did this right.
 
 =====  ===============
 Bonus  Deadline Option
@@ -326,7 +326,7 @@ Final Project == Final Exam
    **the final project that described by this document will be treated as the final
    examination** since the grade and feedback that a student receives for this
    assignment is a summative evaluation of the entire term's work.
-   
+
 Final Project Grade Not Dropped
    Since this Final Project is your Final Exam, the grade that you earn for your
    final project submission does not qualify as a grade that can be dropped.
@@ -402,8 +402,8 @@ in "|ssh_keys|_" to setup your public and private key pair on Odin and GitHub.
       private repository you created on GitHib.
 
 2. Add the course instructors instructors as collaborators to your private
-   GitHub repository using the instructions provided 
-   `here <https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-user-account/managing-access-to-your-personal-repositories/inviting-collaborators-to-a-personal-repository>`__. 
+   GitHub repository using the instructions provided
+   `here <https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-user-account/managing-access-to-your-personal-repositories/inviting-collaborators-to-a-personal-repository>`__.
    The usernames for the course instructors are listed below.
 
    * |mepcotterell|_ -- Dr. Cotterell
