@@ -19,6 +19,7 @@ public class OmegaApp extends Application {
     /**
      * Constructs an {@code OmegaApp} object. This default (i.e., no argument)
      * constructor is executed in Step 2 of the JavaFX Application Life-Cycle.
+     * If you are reading this, i successuflly connected to github.
      */
     public OmegaApp() {}
 
