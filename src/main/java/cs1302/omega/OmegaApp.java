@@ -45,10 +45,10 @@ public class OmegaApp extends Application {
         banner.setFitWidth(720);
 
         VBox pane = new VBox();
-        Scene scene = new Scene(pane, 720, 720);
+        Scene scene = new Scene(pane, 720, 740);
         stage.setMaxWidth(720);
-        stage.setMaxHeight(720);
-        stage.setTitle("SettleScore V1.00");
+        stage.setMaxHeight(750);
+        stage.setTitle("SettleScore! V1.02");
         stage.setScene(scene);
         stage.sizeToScene();
         stage.show();

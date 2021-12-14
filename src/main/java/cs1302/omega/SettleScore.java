@@ -16,10 +16,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 
 /**
  * This class represents my omega application itself, excluding banners
- * and my options bar. Settle score's description is within omegaApp.
+ * and my options bar. Settle score's full length description is within omegaApp.
+ * In short, SettleScore takes a location and returns demographicaly info about the
+ * location as well as a map of said location.
  **/
 public class SettleScore extends VBox {
 
@@ -44,7 +47,7 @@ public class SettleScore extends VBox {
      **/
     public SettleScore() {
         hotBox = new HBox();
-        searchTxt = new Label("Enter a valid US Zipcode: ");
+        searchTxt = new Label("Enter a valid US City: ");
         searchBar = new TextField();
         generateBtn = new Button("Generate");
         hotBox.getChildren().addAll(searchTxt,searchBar,generateBtn);
@@ -55,8 +58,13 @@ public class SettleScore extends VBox {
         hotBox.setPadding(new Insets(5,10,5,10));
 
         content = new HBox();
-        mapView = new ImageView(new Image("https://sienaconstruction.com/wp-content/uploads/2017/05/test-image.jpg"));
-        report = new Text("This is your settle score report, you got a TEST!");
+        mapView = new ImageView(new Image("https://www.enchantedlearning.com/usa/" +
+            "cities/colormap.GIF"));
+        report = new Text("Try out SettleScore!" + "\n" +
+        "here are some examples of valid queries: " + "\n" +
+        "athens, ga/rochester, ny/ seattle, wa/new york, ny/ los angeles, ca/houston, tx");
+        report.setWrappingWidth(310);
+        report.setFont(Font.font ("Verdana", 15));
         content.getChildren().addAll(mapView,report);
         content.setSpacing(10);
         content.setPadding(new Insets(5,0,5,0));
@@ -82,11 +90,13 @@ public class SettleScore extends VBox {
         Runnable threadUpdate = () -> { //create a runnable thread
             try {
                 generate(); //update urls
+            } catch (IndexOutOfBoundsException y) {
+                Platform.runLater(() -> SettleScoreUtil.getInputAlert(y).showAndWait());
+                System.err.println("Invalid Query");
             } catch (Exception x) { //catch statement will trigger alert
                 Platform.runLater(() -> SettleScoreUtil.getAlert(x).showAndWait());
             }
         };
-
         runThread(threadUpdate); //run previous thread
     }
 
@@ -102,21 +112,30 @@ public class SettleScore extends VBox {
     /**
      *  This method will generate all the proper content for the settle score app.
      *  It should be called whenever the generate button is pressed, making sure to
-     *  update the progress bar periodically.
+     *  update the progress bar periodically. This method calls the utility class
+     *  and defines the applications main purpose.
      *
      */
     public void generate() throws Exception {
+        double crimeScore = 0;
+        int[] crimeCounts = new int[4];
+        int recCount = 0;
+        double recScore = 0; //define this differenltly as you add more info
+        double settleScore = 0;
+
         String report = ""; //the report we will place
+
         setProgress(0); //at first progress will be 0
         loadMsg.setText("Loading..."); //make sure to periodically update the load message
 
-        int zip = 0; //get zipcode from textfield
+        //int zip = 0; //get zipcode from textfield
         String searchContents = searchBar.getText();
         //search contents should be formatted as "athens, ga" with ONE SPACE BEFORE THE STATE and a
         //comma FOLLOWING THE CITY
+
         String city = searchContents.substring(0,searchContents.indexOf(","));
         String cityCp = city; //store name of city with normal spaces
-        String state = searchContents.substring(searchContents.indexOf(' ') + 1);
+        String state = searchContents.substring(searchContents.indexOf(',') + 2);
 
         setProgress(.25);
         //if the city name has any spaces in it ie:los angeles, new york etc, fil the space
@@ -125,13 +144,23 @@ public class SettleScore extends VBox {
         System.err.println(city);
 
         //USING HELPER METHODS, get image, and craft a report of the zipcode
-        SettleScoreUtil.getRecScore(state,city);
+        recCount = SettleScoreUtil.getRecScore(state,city);
+        recScore = recCount * 2.3;
+        System.err.println("the rec query was successful");
         setProgress(.5);
         mapView.setImage(SettleScoreUtil.getMapImage(state,city));
+        System.err.println("the map query was successful");
         setProgress(.75);
         System.err.println("generate was clicked on a new thread");
-        double test = SettleScoreUtil.getCrimeScore(state);
-        System.err.println("thrcrime score query was successful");
+        crimeScore = SettleScoreUtil.getCrimeScore(state);
+        System.err.println("the crime score query was successful");
+        settleScore = SettleScoreUtil.getSettleScore(crimeScore, recCount);
+
+        int[] counts = SettleScoreUtil.getCounts(state);
+
+        report = SettleScoreUtil.getReport(crimeScore,recCount,counts,searchContents);
+        //fill in the text box with the report
+        this.report.setText(report);
 
         setProgress(1); //set progress to 1
         loadMsg.setText("Crime data from the 2020 US Census"); //reset dynamic text
