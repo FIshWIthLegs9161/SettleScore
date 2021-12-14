@@ -19,8 +19,9 @@ import javafx.stage.Stage;
 /**
  * My application, titled SettleScore, takes in a valid US zip code and
  * generates a "SettleScore" based on the crime rate and number of recreational
- * oppurtunities in the surrounding area. It uses multiple APIS and also will
- * display a map of the city closest to the zip code using geo coordinates.
+ * oppurtunities in the surrounding area. It uses multiple APIS and also
+ * displays a map of the city closest to the zip code using geo coordinates.
+ * The settle score combines multiple api's in a meaningful way.
  */
 public class OmegaApp extends Application {
 
@@ -39,15 +40,15 @@ public class OmegaApp extends Application {
 
         // demonstrate how to load local asset using "file:resources/"
         // I will load my own custom app banner at the end of the project
-        Image bannerImage = new Image("file:resources/readme-banner.png");
+        Image bannerImage = new Image("file:resources/OmegaAppBanner.png");
         ImageView banner = new ImageView(bannerImage);
         banner.setPreserveRatio(true);
         banner.setFitWidth(720);
 
         VBox pane = new VBox();
-        Scene scene = new Scene(pane, 720, 740);
+        Scene scene = new Scene(pane, 720, 720);
         stage.setMaxWidth(720);
-        stage.setMaxHeight(750);
+        stage.setMaxHeight(740);
         stage.setTitle("SettleScore! V1.02");
         stage.setScene(scene);
         stage.sizeToScene();
@@ -68,7 +69,10 @@ public class OmegaApp extends Application {
         alert.setTitle("About Tahsin Nabi");
         ButtonType close = new ButtonType("Close", ButtonBar.ButtonData.OK_DONE);
         alert.setContentText("Tahsin Nabi, tjn92948@uga.edu, Version 1.00");
-        Image aboutImg = new Image("https://scontent-atl3-1.xx.fbcdn.net/v/t1.6435-9/72687449_2519325251446909_5658522496542965760_n.jpg?_nc_cat=107&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=KDvpmWbpk8cAX9msVcH&_nc_ht=scontent-atl3-1.xx&oh=97dfbd9aa31c78381893b05a8800f1bb&oe=61C0C9F7");
+        Image aboutImg = new Image("https://scontent-atl3-1.xx.fbcdn.net/v/" +
+            "t1.6435-9/72687449_2519325251446909_5658522496542965760_n.jpg?_nc_cat=" +
+            "107&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=KDvpmWbpk8cAX9msVcH&_nc_ht=scontent-" +
+            "atl3-1.xx&oh=97dfbd9aa31c78381893b05a8800f1bb&oe=61C0C9F7");
         ImageView imgView = new ImageView(aboutImg);
         imgView.setPreserveRatio(true);
         imgView.setFitHeight(300);

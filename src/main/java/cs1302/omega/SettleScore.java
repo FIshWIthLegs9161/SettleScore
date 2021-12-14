@@ -20,7 +20,7 @@ import javafx.scene.text.Font;
 
 /**
  * This class represents my omega application itself, excluding banners
- * and my options bar. Settle score's full length description is within omegaApp.
+ * and my options bar. Settle score's full length description is within OmegaApp.
  * In short, SettleScore takes a location and returns demographicaly info about the
  * location as well as a map of said location.
  **/
@@ -47,7 +47,7 @@ public class SettleScore extends VBox {
      **/
     public SettleScore() {
         hotBox = new HBox();
-        searchTxt = new Label("Enter a valid US City: ");
+        searchTxt = new Label("Enter a valid US City: "); //default prompt
         searchBar = new TextField();
         generateBtn = new Button("Generate");
         hotBox.getChildren().addAll(searchTxt,searchBar,generateBtn);
@@ -60,20 +60,20 @@ public class SettleScore extends VBox {
         content = new HBox();
         mapView = new ImageView(new Image("https://www.enchantedlearning.com/usa/" +
             "cities/colormap.GIF"));
-        report = new Text("Try out SettleScore!" + "\n" +
-        "here are some examples of valid queries: " + "\n" +
+        report = new Text("Try out SettleScore!, " +
+        "here are some examples of valid queries: " + "\n" + "\n" +
         "athens, ga/rochester, ny/ seattle, wa/new york, ny/ los angeles, ca/houston, tx");
         report.setWrappingWidth(310);
         report.setFont(Font.font ("Verdana", 15));
         content.getChildren().addAll(mapView,report);
         content.setSpacing(10);
         content.setPadding(new Insets(5,0,5,0));
-        mapView.setFitWidth(400);
+        mapView.setFitWidth(400); //set the contents
         mapView.setFitHeight(400);
 
         loadBox = new HBox();
         loadMsg = new Text("Data from US Census & HERE.com");
-        loadBar = new ProgressBar(1);
+        loadBar = new ProgressBar(1); //set load bar up by default
         loadBox.getChildren().addAll(loadMsg,loadBar);
         loadBox.setSpacing(10);
         loadBox.setPadding(new Insets(5,10,5,10));
@@ -90,7 +90,7 @@ public class SettleScore extends VBox {
         Runnable threadUpdate = () -> { //create a runnable thread
             try {
                 generate(); //update urls
-            } catch (IndexOutOfBoundsException y) {
+            } catch (IndexOutOfBoundsException y) { //an IOOBE should be caught before
                 Platform.runLater(() -> SettleScoreUtil.getInputAlert(y).showAndWait());
                 System.err.println("Invalid Query");
             } catch (Exception x) { //catch statement will trigger alert
@@ -143,7 +143,7 @@ public class SettleScore extends VBox {
         city = city.replaceAll(" ", "%20");
         System.err.println(city);
 
-        //USING HELPER METHODS, get image, and craft a report of the zipcode
+        //USING HELPER METHODS, get image, and craft a report from the API's, updates load bar
         recCount = SettleScoreUtil.getRecScore(state,city);
         recScore = recCount * 2.3;
         System.err.println("the rec query was successful");
@@ -174,7 +174,7 @@ public class SettleScore extends VBox {
      * @param x tis refers to some class which extends runnable and is therefore- runnable lol
      **/
     public static void runThread(Runnable x) {
-        Thread t = new Thread(x);
+        Thread t = new Thread(x); //make a new thread
         t.setDaemon(false);
         t.start();
     }

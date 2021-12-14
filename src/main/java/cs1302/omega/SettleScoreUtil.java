@@ -53,7 +53,7 @@ public class SettleScoreUtil {
         System.err.println("Long: " + lon + "   Lati: " + lat);
 
         //if an IO exception is thrown it is MOST LIKELY that this key exired
-        String mapAPIKey = "-qvBuPVENANXDgyvHZLkZmqBmFHbnEenxtSx2DS4wdA";
+        String mapAPIKey = "055d3-57VjWOq0JxkNKtUOrxHKEE0pM8buwuozm46Tw";
         String mapUrl = "https://image.maps.ls.hereapi.com/mia/1.6/mapview?" +
             "apiKey=" + mapAPIKey + "&c=" +
             lat + "," + lon + "&u=5k&h=500&w=500";
@@ -117,6 +117,7 @@ public class SettleScoreUtil {
         crimeScore = 5 * ((totalCrimes / population) / avgCrimeRate);
 
         System.err.println(crimeScore);
+        crimeScore = Math.round(crimeScore);
         return crimeScore;
     }
 
@@ -260,7 +261,7 @@ public class SettleScoreUtil {
     public static String getReport(double crimeScore, int recCount, int[] counts, String x)
         throws IOException {
         double settleScore = getSettleScore(crimeScore, recCount);
-        String rtn = "This is your SettleScore! report for " + x + ".\n";
+        String rtn = "This is your SettleScore! report for " + x + ".\n" + "\n";
         rtn += "The overall crime score for this state was " + crimeScore + ".\n" +
             "Here is a breakdown of some important numbers" + ".\n";
 
@@ -270,7 +271,7 @@ public class SettleScoreUtil {
         rtn += "The burglary count was approximately " + counts[3] + ".\n";
         rtn += "The property theft count was approximately " + counts[4] + ".\n";
 
-        rtn += "There are " + recCount + " must see locations close by in this city." + "\n";
+        rtn += "There are " + recCount + " must see locations close by in this city." + "\n" + "\n";
         rtn += "The final SettleScore! taking all this and more into account is: "  + settleScore;
 
         return rtn;
