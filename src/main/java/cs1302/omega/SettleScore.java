@@ -1,5 +1,7 @@
 package cs1302.omega;
 
+import cs1302.omega.SettleScoreUtil;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -100,12 +102,17 @@ public class SettleScore extends VBox {
      */
     public void generate() throws Exception {
         int zip = 0; //get zipcode from textfield
+        String state = searchBar.getText();
+        String city = searchBar.getText();
         String report = ""; //the report we will place
         setProgress(0); //at first progress will be 0
         loadMsg.setText("Loading..."); //make sure to periodically update the load message
 
         //USING HELPER METHODS, get image, and craft a report of the zipcode
-
+        mapView.setImage(SettleScoreUtil.getMapImage("ga","athens"));
+        System.err.println("generate was clicked on a new thread");
+        double test = SettleScoreUtil.getCrimeScore(state);
+        System.err.println("thrcrime score query was successful");
         setProgress(1); //set progress to 1
         loadMsg.setText("Data from US Census & HERE.com"); //reset dynamic text
 

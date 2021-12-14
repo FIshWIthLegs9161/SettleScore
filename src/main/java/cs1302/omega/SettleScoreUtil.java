@@ -4,6 +4,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import java.io.IOException;
 import cs1302.api.Tools;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class SettleScoreUtil {
 
@@ -17,27 +21,36 @@ public class SettleScoreUtil {
      * API  URL TURNING GETTING COORDINATES: https://api.geoapify.com/v1/geocode/search?text=38%20Upper%20Montagu%20Street%2C%20Westminster%20W1H%201LJ%2C%20United%20Kingdom&apiKey=7c56182fbbf1470faca613b0fe5262fe
      * @return
      */
-    public static Image getMapImage(int zip) throws IOException {
-        String zipUrl = "http://ziptasticapi.com/" + zip;
-        String mapUrl = ""; //url which will be extracted from the
-        String coorUrl = "";
+    public static Image getMapImage(String state, String city) throws IOException {
 
-        String city = Tools.get((Tools.getJson(zipUrl,"GET")), "city", 0).getAsString();
-        System.err.println("made an elemetn");
-        String state = Tools.get((Tools.getJson(zipUrl)), "state", 0).getAsString();
+        URL coorUrl = new URL("https://api.geoapify.com/v1/geocode/search?city="
+        + city +"&state=" + state +
+        "&country=US&format=json&apiKey=7c56182fbbf1470faca613b0fe5262fe");
+        String jsonText = getUrlText(coorUrl);
 
-        coorUrl = "https://api.geoapify.com/v1/geocode/search?city=" + city + "&state=" + state + "&country=US&format=json&apiKey=7c56182fbbf1470faca613b0fe5262fe";
-        String lon = Tools.get((Tools.getJson(coorUrl)), "lon", 0).getAsString();
-        String lat = Tools.get((Tools.getJson(coorUrl)), "lat", 0).getAsString();
+        //coorUrl = "https://api.geoapify.com/v1/geocode/search?city=" + city + "&state="
+        //+ state + "&country=US&format=json&apiKey=7c56182fbbf1470faca613b0fe5262fe";
 
-        mapUrl = "https://image.maps.ls.hereapi.com/mia/1.6/mapview?apiKey=gy619M0V4cf7rDPwQhHxC93OFiDosU17jDgdLd89DWs&c=" + lon + "," + lat + "&u=5k&h=500&w=500";
+
+        //URL mapUrl = new URL("https://image.maps.ls.hereapi.com/mia/1.6/mapview" +
+        //"?apiKey=gy619M0V4cf7rDPwQhHxC93OFiDosU17jDgdLd89DWs&c=" + lon +
+        //"," + lat + "&u=5k&h=500&w=500");
+        //String jsonText = getUrlText(coorUrl);
+
+        String lon = getCoorElement("lon",jsonText);
+        String lat = getCoorElement("lat",jsonText);
+        System.err.println("Long: " + lon + "   Lati: " + lat);
+
+        String mapUrl = "https://image.maps.ls.hereapi.com/mia/1.6/mapview?" +
+            "apiKey=gy619M0V4cf7rDPwQhHxC93OFiDosU17jDgdLd89DWs&c=" +
+            lon + "," + lat + "&u=5k&h=500&w=500";
 
 
         return new Image(mapUrl);
         }
 
-        public static double getSettleScore(int x, int y) throws IOException {
-        return getCrimeScore(x) - getRecScore(y);
+        public static double getSettleScore(double x, double y) throws IOException {
+        return 1.0;
         }
 
     /**
@@ -47,33 +60,42 @@ public class SettleScoreUtil {
      * @param zip the zip code of a location of interest
      * @return
      */
-    public static double getCrimeScore(int zip) throws IOException {
-        //String currentYear = Tools.get((Tools.getJson("http://worldclockapi.com/api/json/est/now")), "ordinalDate", 0).getAsString().substring(0,4);
-        //for now assume previous year is 2020, in the future you can make it variable to the current year
+    public static double getCrimeScore(String state) throws IOException {
+        //String currentYear = Tools.get((Tools.getJson
+        //("http://worldclockapi.com/api/json/est/now")),
+        //"ordinalDate", 0).getAsString().substring(0,4);
+        //for now assume previous year is 2020, in the
+        //future you can make it variable to the current year
+
         double crimeScore = 0;
-        int totalCrimes = 0;
+        double totalCrimes = 0;
         int population = 0;
         double avgCrimeRate = .04743; //ballpark number from 2020
 
-        String zipUrl = "http://ziptasticapi.com/" + zip;
-        String state = Tools.get((Tools.getJson(zipUrl)), "state", 0).getAsString();
+        //String zipUrl = "http://ziptasticapi.com/" + zip;
+        //String state = Tools.get((Tools.getJson(zipUrl)), "state", 0).getAsString();
 
-        String censusUrl = "https://api.usa.gov/crime/fbi/sapi/api/estimates/states/" + state + "/2020/2021?API_KEY=KuoKPSs0imhj6UEU8aSObTvUXj05KqZu67cltA76";
+        URL censusUrl = new URL("https://api.usa.gov/crime/fbi/sapi/api/estimates/states/"
+        + state + "/2020/2021?API_KEY=KuoKPSs0imhj6UEU8aSObTvUXj05KqZu67cltA76");
+        String jsonText = getUrlText(censusUrl);
 
-        population += Tools.get((Tools.getJson(censusUrl)), "population", 0).getAsInt();
+        population += Integer.parseInt(getElement("population",jsonText));
+        //System.err.println(population);
+        totalCrimes += Integer.parseInt(getElement("violent_crime",jsonText));
+        totalCrimes += Integer.parseInt(getElement("homicide",jsonText));
+        totalCrimes += Integer.parseInt(getElement("robbery",jsonText));
+        totalCrimes += Integer.parseInt(getElement("aggravated_assault",jsonText));
+        totalCrimes += Integer.parseInt(getElement("property_crime",jsonText));
+        totalCrimes += Integer.parseInt(getElement("burglary",jsonText));
+        totalCrimes += Integer.parseInt(getElement("larceny",jsonText));
+        totalCrimes += Integer.parseInt(getElement("motor_vehicle_theft",jsonText));
+        //totalCrimes += Integer.parseInt(getElement("arson",jsonText));
 
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "violent_crime", 0).getAsInt();
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "homicide", 0).getAsInt();
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "robbery", 0).getAsInt();
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "aggravated_assault", 0).getAsInt();
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "property_crime", 0).getAsInt();
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "burglary", 0).getAsInt();
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "larceny", 0).getAsInt();
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "motor_vehicle_theft", 0).getAsInt();
-        totalCrimes += Tools.get((Tools.getJson(censusUrl)), "arson", 0).getAsInt();
-
+        System.err.println(totalCrimes);
+        System.err.println(population);
         crimeScore = 5 * ((totalCrimes / population) / avgCrimeRate);
 
+        System.err.println(crimeScore);
         return crimeScore;
     }
 
@@ -100,6 +122,60 @@ public class SettleScoreUtil {
         rtn.setResizable(true);
 
         return rtn;
+    }
+
+    /**
+     * I got modified code from another stack user. It takes the text from a url.
+     * @param url
+     * @return
+     */
+    public static String getUrlText(URL url) {
+        try
+        {
+            String rtn = "";
+            BufferedReader input = new BufferedReader(new InputStreamReader(url.openStream()));
+
+            String line;
+            while ((line = input.readLine()) != null) {
+                rtn += line;
+            }
+            input.close();
+            return rtn;
+        } catch (MalformedURLException e) {
+            System.out.println("MUE" + e.getMessage());
+
+        } catch (IOException e) {
+            System.out.println("IOE" + e.getMessage());
+        }
+        return null; //return null if geturltext fails
+    }
+
+    /**
+     * This method will traverse a JSON file which has been turned into a string
+     * in order to pull out the value of a specific element. Although it is inefficient
+     * I ran into several issues using gson.
+     * @param param
+     * @param json
+     * @return
+     */
+    public static String getElement(String param, String json) {
+        String removeFront = json.substring(json.indexOf(param) + param.length() + 4);
+        //System.out.println(removeFront);
+        return removeFront.substring(0,removeFront.indexOf(','));
+    }
+
+     /**
+     * This method will traverse a JSON file which has been turned into a string
+     * in order to pull out the value of a specific element. Although it is inefficient
+     * I ran into several issues using gson. This one is specific for geo coords.
+     * @param param
+     * @param json
+     * @return
+     */
+    public static String getCoorElement(String param, String json) {
+        String removeFront = json.substring(json.indexOf(param) + param.length() + 2);
+        //System.out.println(removeFront);
+        return removeFront.substring(0,removeFront.indexOf(','));
     }
 
 
