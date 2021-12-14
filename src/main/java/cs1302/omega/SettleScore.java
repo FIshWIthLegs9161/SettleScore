@@ -17,6 +17,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * This class represents my omega application itself, excluding banners
+ * and my options bar. Settle score's description is within omegaApp.
+ **/
 public class SettleScore extends VBox {
 
     //these nodes represent the hotbar of the application
@@ -35,7 +39,9 @@ public class SettleScore extends VBox {
     Text loadMsg;
     ProgressBar loadBar;
 
-
+    /**
+     * This is the constructor of SettleScore which sets all the javafx components.
+     **/
     public SettleScore() {
         hotBox = new HBox();
         searchTxt = new Label("Enter a valid US Zipcode: ");
@@ -74,11 +80,9 @@ public class SettleScore extends VBox {
      */
     private void generateUpdate(ActionEvent e) {
         Runnable threadUpdate = () -> { //create a runnable thread
-            try
-            {
+            try {
                 generate(); //update urls
-            } catch (Exception x)
-            { //catch statement will trigger alert
+            } catch (Exception x) { //catch statement will trigger alert
                 Platform.runLater(() -> SettleScoreUtil.getAlert(x).showAndWait());
             }
         };
@@ -97,24 +101,40 @@ public class SettleScore extends VBox {
 
     /**
      *  This method will generate all the proper content for the settle score app.
-     *  It should be called whenever the generate button is pressed, making sure to update the progress bar periodically.
+     *  It should be called whenever the generate button is pressed, making sure to
+     *  update the progress bar periodically.
      *
      */
     public void generate() throws Exception {
-        int zip = 0; //get zipcode from textfield
-        String state = searchBar.getText();
-        String city = searchBar.getText();
         String report = ""; //the report we will place
         setProgress(0); //at first progress will be 0
         loadMsg.setText("Loading..."); //make sure to periodically update the load message
 
+        int zip = 0; //get zipcode from textfield
+        String searchContents = searchBar.getText();
+        //search contents should be formatted as "athens, ga" with ONE SPACE BEFORE THE STATE and a
+        //comma FOLLOWING THE CITY
+        String city = searchContents.substring(0,searchContents.indexOf(","));
+        String cityCp = city; //store name of city with normal spaces
+        String state = searchContents.substring(searchContents.indexOf(' ') + 1);
+
+        setProgress(.25);
+        //if the city name has any spaces in it ie:los angeles, new york etc, fil the space
+        // with "%20" strings
+        city = city.replaceAll(" ", "%20");
+        System.err.println(city);
+
         //USING HELPER METHODS, get image, and craft a report of the zipcode
-        mapView.setImage(SettleScoreUtil.getMapImage("ga","athens"));
+        SettleScoreUtil.getRecScore(state,city);
+        setProgress(.5);
+        mapView.setImage(SettleScoreUtil.getMapImage(state,city));
+        setProgress(.75);
         System.err.println("generate was clicked on a new thread");
         double test = SettleScoreUtil.getCrimeScore(state);
         System.err.println("thrcrime score query was successful");
+
         setProgress(1); //set progress to 1
-        loadMsg.setText("Data from US Census & HERE.com"); //reset dynamic text
+        loadMsg.setText("Crime data from the 2020 US Census"); //reset dynamic text
 
     }
 

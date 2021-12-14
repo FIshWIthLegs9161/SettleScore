@@ -28,29 +28,21 @@ public class SettleScoreUtil {
         "&country=US&format=json&apiKey=7c56182fbbf1470faca613b0fe5262fe");
         String jsonText = getUrlText(coorUrl);
 
-        //coorUrl = "https://api.geoapify.com/v1/geocode/search?city=" + city + "&state="
-        //+ state + "&country=US&format=json&apiKey=7c56182fbbf1470faca613b0fe5262fe";
-
-
-        //URL mapUrl = new URL("https://image.maps.ls.hereapi.com/mia/1.6/mapview" +
-        //"?apiKey=gy619M0V4cf7rDPwQhHxC93OFiDosU17jDgdLd89DWs&c=" + lon +
-        //"," + lat + "&u=5k&h=500&w=500");
-        //String jsonText = getUrlText(coorUrl);
-
         String lon = getCoorElement("lon",jsonText);
         String lat = getCoorElement("lat",jsonText);
         System.err.println("Long: " + lon + "   Lati: " + lat);
 
+        String mapAPIKey = "u8Au1Jhdi8pEVV5F2vCH3N_T3eLaCPIaekGDefvG2nI";
         String mapUrl = "https://image.maps.ls.hereapi.com/mia/1.6/mapview?" +
-            "apiKey=gy619M0V4cf7rDPwQhHxC93OFiDosU17jDgdLd89DWs&c=" +
-            lon + "," + lat + "&u=5k&h=500&w=500";
+            "apiKey=" + mapAPIKey + "&c=" +
+            lat + "," + lon + "&u=5k&h=500&w=500";
 
-
+        System.err.println(mapUrl);
         return new Image(mapUrl);
         }
 
         public static double getSettleScore(double x, double y) throws IOException {
-        return 1.0;
+            return 1.0;
         }
 
     /**
@@ -102,11 +94,30 @@ public class SettleScoreUtil {
     /**
      * This method will take in a zip code, find relevant geo coordinates and return a score
      * of how many recreational facilities there are nearby.
+     * APIKey
      * @param zip
      * @return
      */
-    public static int getRecScore(int zip) throws IOException{
-        return 1;
+    public static int getRecScore(String state, String city) throws IOException{
+                URL coorUrl = new URL("https://api.geoapify.com/v1/geocode/search?city="
+        + city +"&state=" + state +
+        "&country=US&format=json&apiKey=7c56182fbbf1470faca613b0fe5262fe");
+        String jsonText = getUrlText(coorUrl);
+
+        String lon = getCoorElement("lon",jsonText);
+        String lat = getCoorElement("lat",jsonText);
+        System.err.println("Long: " + lon + "   Lati: " + lat);
+
+        URL recUrl = new URL("https://api.opentripmap.com/0.1/en/places/radius?radius=8000&lon="
+        + lon + "&lat=" + lat + "&rate=1&format=count&limit=300&apikey="
+        + "5ae2e3f221c38a28845f05b6ff66ab9c026d1daa06371b7280ad7fa9");
+        String recText = getUrlText(recUrl);
+        System.err.println(recText);
+        recText = recText.substring(recText.indexOf(":") + 1, recText.indexOf('}'));
+        //System.err.println(recText);
+        int recCount = Integer.parseInt(recText);
+        System.err.println(recCount);
+        return recCount;
     }
 
     /**
