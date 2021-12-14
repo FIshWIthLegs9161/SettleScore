@@ -48,12 +48,15 @@ public class SettleScoreUtil {
             "&country=US&format=json&apiKey=7c56182fbbf1470faca613b0fe5262fe");
         String jsonText = getUrlText(coorUrl);
 
+        //get the longitude and latitude
         String lon = getCoorElement("lon",jsonText);
         String lat = getCoorElement("lat",jsonText);
         System.err.println("Long: " + lon + "   Lati: " + lat);
 
         //if an IO exception is thrown it is MOST LIKELY that this key exired
-        String mapAPIKey = "055d3-57VjWOq0JxkNKtUOrxHKEE0pM8buwuozm46Tw";
+        //IF THE IO EXCEPTION IS STILL HAPPENING CHANGE THE STRING "mapAPIKey"
+        // to "eA0zEAwF32u9QbF7IMhtUmXoXDmBGH91aML7qdRxZ-s" which is not being used
+        String mapAPIKey = "SHvfBo0eh51rU8ScryoU9p_bTsqQLOJpXRNeqqkjmyM";
         String mapUrl = "https://image.maps.ls.hereapi.com/mia/1.6/mapview?" +
             "apiKey=" + mapAPIKey + "&c=" +
             lat + "," + lon + "&u=5k&h=500&w=500";
@@ -71,7 +74,7 @@ public class SettleScoreUtil {
      * @return double the settle score itself
      **/
     public static double getSettleScore(double x, double y) throws IOException {
-        return ((y / 10) - x) * 20;
+        return ((y / 10) - x * 3) * 20;
     }
 
     /**
@@ -91,6 +94,7 @@ public class SettleScoreUtil {
         //for now assume previous year is 2020, in the
         //future you can make it variable to the current year
 
+        //variables which we will need
         double crimeScore = 0;
         double totalCrimes = 0;
         int population = 0;
@@ -100,6 +104,7 @@ public class SettleScoreUtil {
             + state + "/2020/2021?API_KEY=KuoKPSs0imhj6UEU8aSObTvUXj05KqZu67cltA76");
         String jsonText = getUrlText(censusUrl);
 
+        //get all the elements to be added to the total crime count
         population += Integer.parseInt(getElement("population",jsonText));
         //System.err.println(population);
         totalCrimes += Integer.parseInt(getElement("violent_crime",jsonText));
@@ -115,6 +120,7 @@ public class SettleScoreUtil {
         System.err.println(totalCrimes);
         System.err.println(population);
         crimeScore = 5 * ((totalCrimes / population) / avgCrimeRate);
+        //calculate crime rate and scale up by 5
 
         System.err.println(crimeScore);
         crimeScore = Math.round(crimeScore);
@@ -140,6 +146,7 @@ public class SettleScoreUtil {
             "&country=US&format=json&apiKey=7c56182fbbf1470faca613b0fe5262fe");
         String jsonText = getUrlText(coorUrl);
 
+        //get longitude and latitude
         String lon = getCoorElement("lon",jsonText);
         String lat = getCoorElement("lat",jsonText);
         System.err.println("Long: " + lon + "   Lati: " + lat);
@@ -149,6 +156,7 @@ public class SettleScoreUtil {
             + "5ae2e3f221c38a28845f05b6ff66ab9c026d1daa06371b7280ad7fa9");
         String recText = getUrlText(recUrl);
         System.err.println(recText);
+        //make a substring looking for the count element
         recText = recText.substring(recText.indexOf(":") + 1, recText.indexOf('}'));
         //System.err.println(recText);
         int recCount = Integer.parseInt(recText);
@@ -168,6 +176,7 @@ public class SettleScoreUtil {
         rtn.setTitle("An Exception Occurred");
         rtn.setContentText(e.getMessage() + ": see API for more information" +
             ", if the error message is a link then your API key is expired");
+        //flexible way of dealing with any exception
         rtn.setResizable(true);
 
         return rtn;
@@ -187,6 +196,7 @@ public class SettleScoreUtil {
         rtn.setContentText("The Query was invalid, try: " +
             "cityName, stateInitials");
         rtn.setResizable(true);
+        //specific to errors with the search bar
 
         return rtn;
     }
@@ -282,7 +292,7 @@ public class SettleScoreUtil {
      * my report which gets returned.
      *
      * @param state the state INITIAls to be searched
-     * @returns int[] int array filled wiht the counts i need
+     * @return int[] int array filled wiht the counts i need
      **/
     public static int[] getCounts(String state) throws MalformedURLException {
 

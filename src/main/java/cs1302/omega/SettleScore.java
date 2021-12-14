@@ -58,8 +58,7 @@ public class SettleScore extends VBox {
         hotBox.setPadding(new Insets(5,10,5,10));
 
         content = new HBox();
-        mapView = new ImageView(new Image("https://www.enchantedlearning.com/usa/" +
-            "cities/colormap.GIF"));
+        mapView = new ImageView(new Image("file:resources/MapOfAmerica.jpg"));
         report = new Text("Try out SettleScore!, " +
         "here are some examples of valid queries: " + "\n" + "\n" +
         "athens, ga/rochester, ny/ seattle, wa/new york, ny/ los angeles, ca/houston, tx");
